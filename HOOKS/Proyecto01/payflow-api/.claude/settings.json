@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$projectDir = $env:CLAUDE_PROJECT_DIR; if (-not $projectDir) { exit 0 }; $logDir = Join-Path $projectDir '.claude/logs'; New-Item -ItemType Directory -Force -Path $logDir | Out-Null; $input = [Console]::In.ReadToEnd(); if ($input) { try { $data = $input | ConvertFrom-Json; $ts = Get-Date -Format o; $sessionId = if ($data.session_id) { $data.session_id } else { '' }; $cmd = if ($data.tool_input -and $data.tool_input.command) { $data.tool_input.command } else { '' }; $line = '{\"ts\":\"' + $ts + '\",\"session\":\"' + $sessionId + '\",\"cmd\":\"' + ($cmd -replace '\"', '\\\\"') + '\"}'; Add-Content -Path (Join-Path $logDir 'audit.jsonl') -Value $line } catch { } }; exit 0",
+            "async": true
+          }
+        ]
+      },
+    {
+        "matcher": "Bash|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/security_gate.py",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -6,18 +6,29 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$projectDir = $env:CLAUDE_PROJECT_DIR; if (-not $projectDir) { exit 0 }; $logDir = Join-Path $projectDir '.claude/logs'; New-Item -ItemType Directory -Force -Path $logDir | Out-Null; $input = [Console]::In.ReadToEnd(); if ($input) { try { $data = $input | ConvertFrom-Json; $ts = Get-Date -Format o; $sessionId = if ($data.session_id) { $data.session_id } else { '' }; $cmd = if ($data.tool_input -and $data.tool_input.command) { $data.tool_input.command } else { '' }; $line = '{\"ts\":\"' + $ts + '\",\"session\":\"' + $sessionId + '\",\"cmd\":\"' + ($cmd -replace '\"', '\\\\"') + '\"}'; Add-Content -Path (Join-Path $logDir 'audit.jsonl') -Value $line } catch { } }; exit 0",
+            "command": "$projectDir = $env:CLAUDE_PROJECT_DIR; if (-not $projectDir) { exit 0 }; $logDir = Join-Path $projectDir '.claude/logs'; New-Item -ItemType Directory -Force -Path $logDir | Out-Null; $input = [Console]::In.ReadToEnd(); if ($input) { try { $data = $input | ConvertFrom-Json; $ts = Get-Date -Format o; $sessionId = if ($data.session_id) { $data.session_id } else { '' }; $cmd = if ($data.tool_input -and $data.tool_input.command) { $data.tool_input.command } else { '' }; $line = '{\"ts\":\"' + $ts + '\",\"session\":\"' + $sessionId + '\",\"cmd\":\"' + ($cmd -replace '\"', '\\\"') + '\"}'; Add-Content -Path (Join-Path $logDir 'audit.jsonl') -Value $line } catch { } }; exit 0",
             "async": true
           }
         ]
       },
-    {
-        "matcher": "Bash|Write|Edit|MultiEdit",
+      {
+        "matcher": "Bash|PowerShell|Write|Edit|MultiEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/security_gate.py",
-            "async": true
+            "command": "python \"$CLAUDE_PROJECT_DIR/hooks/security_gate.py\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|PowerShell|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Eres un revisor de código para un proyecto FastAPI en Python. Analiza la siguiente acción de edición de código: $ARGUMENTS. Verifica estas convenciones: 1) Todas las funciones tienen type hints en parámetros y retorno. 2) Las funciones públicas tienen docstring. 3) Las queries SQL usan parámetros (?) en vez de f-strings. 4) Los endpoints FastAPI usan modelos Pydantic para request y response. 5) No hay secrets hardcodeados (API keys, passwords, tokens literales). Si alguna convención se viola, responde que SÍ hay problema y explica cuál. Si todo está correcto, responde que NO hay problema.",
+            "timeout": 45
           }
         ]
       }

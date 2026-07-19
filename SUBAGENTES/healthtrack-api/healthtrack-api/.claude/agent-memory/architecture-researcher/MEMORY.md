@@ -1,0 +1,1 @@
+- [Evaluación SQLite vs Postgres](project_postgres_evaluation.md) — contexto del debate en equipo (2026-07-19) y hallazgos clave del ángulo "ventajas de Postgres"

@@ -1,0 +1,4 @@
+- [Vitest/Windows/Node26 env notes](vitest_env_windows_node26.md) — pool:'forks' required, prior "Cannot read properties of undefined ('on')" failure did not reproduce
+- [Test patterns that work in this repo](test_patterns_that_work.md) — in-memory SQLite via setDb(), service-level tests, bcrypt rounds=1, it.each boundary tables
+- [Coverage gaps as of 2026-07-14 (updated 2026-07-19)](project_coverage_gaps_2026-07-14.md) — alerts.service.ts now 100%; appointments/notifications/routes/middleware still 0%
+- [Alerts module bug findings 2026-07-19](project_alerts_bug_findings_2026-07-19.md) — blood_pressure alerts ignore diastolic entirely (real bug, reported not fixed)

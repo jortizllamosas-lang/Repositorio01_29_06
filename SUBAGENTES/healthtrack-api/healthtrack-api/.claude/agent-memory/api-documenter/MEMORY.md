@@ -1,0 +1,2 @@
+- [Health Metrics Snapshot](health_metrics_snapshot.md) — Pre-alerts system snapshot of 3 endpoints; known IDOR vulnerability (no role/patient ownership verification)
+- [Alerts Endpoints Documented](alerts_documentation.md) — GET /api/alerts/:patientId and PATCH /api/alerts/:id/acknowledge; proper role-based authorization (contrast to health-metrics IDOR)

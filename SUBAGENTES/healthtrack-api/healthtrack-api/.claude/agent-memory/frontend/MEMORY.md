@@ -1,0 +1,1 @@
+- [Patrones de modal edición por fila](project_dashboard_patterns.md) — cómo se implementó editar-paciente en index.html, replicable para otras entidades; incluye limitación de "clear" en selects opcionales del PUT
